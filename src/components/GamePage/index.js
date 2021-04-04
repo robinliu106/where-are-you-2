@@ -194,7 +194,12 @@ const GamePage = () => {
                         Submit
                     </button>
 
-                    <button className="btn btn-outline-success" id="next_button" onClick={handleNextButton}>
+                    <button
+                        className="btn btn-outline-success"
+                        id="next_button"
+                        onClick={handleNextButton}
+                        disabled={isLoading}
+                    >
                         {isLoading ? "Loading" : "Next City"}
                         {isLoading ? <Spinner loading={true} /> : null}
                     </button>
