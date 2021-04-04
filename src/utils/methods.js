@@ -20,8 +20,23 @@ export const generateRandomPoint = (center, radius) => {
         lng: parseFloat((xp + x0).toFixed(6)),
     };
 };
-
-// console.log(generateRandomPoint({ lat: 42.391102, lng: -71.146218 }, 100));
+export const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+    }
+    function square(x) {
+        return Math.pow(x, 2);
+    }
+    const r = 6371; // radius of the earth in km
+    lat1 = deg2rad(lat1);
+    lat2 = deg2rad(lat2);
+    const lat_dif = lat2 - lat1;
+    const lng_dif = deg2rad(lng2 - lng1);
+    const a = square(Math.sin(lat_dif / 2)) + Math.cos(lat1) * Math.cos(lat2) * square(Math.sin(lng_dif / 2));
+    let d = 2 * r * Math.asin(Math.sqrt(a));
+    let miles = d * 0.621371;
+    return miles.toFixed(2);
+};
 
 export const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
