@@ -27,10 +27,7 @@ let cityList = [
         country: "Anguilla",
         city: "The Valley",
     },
-    {
-        country: "Antarctica",
-        city: null,
-    },
+
     {
         country: "Antigua and Barbuda",
         city: "Saint John's",
@@ -111,18 +108,12 @@ let cityList = [
         country: "Botswana",
         city: "Gaborone",
     },
-    {
-        country: "Bouvet Island",
-        city: null,
-    },
+
     {
         country: "Brazil",
         city: "Brasília",
     },
-    {
-        country: "British Indian Ocean Territory",
-        city: null,
-    },
+
     {
         country: "Brunei",
         city: "Bandar Seri Begawan",
@@ -300,10 +291,6 @@ let cityList = [
         city: "Papeete",
     },
     {
-        country: "French Southern territories",
-        city: null,
-    },
-    {
         country: "Gabon",
         city: "Libreville",
     },
@@ -367,10 +354,7 @@ let cityList = [
         country: "Haiti",
         city: "Port-au-Prince",
     },
-    {
-        country: "Heard Island and McDonald Islands",
-        city: null,
-    },
+
     {
         country: "Holy See (Vatican City State)",
         city: "Citt",
@@ -799,10 +783,7 @@ let cityList = [
         country: "South Africa",
         city: "Pretoria",
     },
-    {
-        country: "South Georgia and the South Sandwich Islands",
-        city: null,
-    },
+
     {
         country: "South Korea",
         city: "Seoul",
@@ -815,10 +796,7 @@ let cityList = [
         country: "Spain",
         city: "Madrid",
     },
-    {
-        country: "Sri Lanka",
-        city: null,
-    },
+
     {
         country: "Sudan",
         city: "Khartum",
@@ -919,10 +897,7 @@ let cityList = [
         country: "United States",
         city: "Washington",
     },
-    {
-        country: "United States Minor Outlying Islands",
-        city: null,
-    },
+
     {
         country: "Uruguay",
         city: "Montevideo",

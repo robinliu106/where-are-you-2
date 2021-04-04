@@ -2,6 +2,8 @@ import "../../styles/app.css";
 import React, { useState, useEffect } from "react";
 import Geocode from "react-geocode";
 import { useSelector, useDispatch } from "react-redux";
+import retry from "async-retry";
+import * as nodeutil from "util";
 import Timer from "./Timer";
 
 //Local methods and data
@@ -17,7 +19,7 @@ const GamePage = () => {
     const score = useSelector(gameSlice.selectScore);
     const cityCoords = useSelector(gameSlice.selectCity);
     const markerCoords = useSelector(gameSlice.selectMarker);
-    const activeRound = useSelector(gameSlice.selectActiveRound);
+    // const activeRound = useSelector(gameSlice.selectActiveRound);
 
     const dispatch = useDispatch();
 
@@ -30,26 +32,72 @@ const GamePage = () => {
         pickNewCity();
     }, []);
 
-    useEffect(() => {
-        console.log("activeRound", activeRound);
-        setShowSubmitButton(activeRound);
-    }, [activeRound]);
+    // useEffect(() => {
+    //     console.log("activeRound", activeRound);
+    //     setShowSubmitButton(activeRound);
+    // }, [activeRound]);
 
-    const pickNewCity = () => {
-        const { country, city } = utils.pickRandomCity(cityList);
-        console.log(country, city);
-        setCurrentPlace({ country, city });
-        Geocode.fromAddress(city).then(
-            (response) => {
-                const { lat, lng } = response.results[0].geometry.location;
+    // const pickNewCity = () => {
+    //     const { country, city } = utils.pickRandomCity(cityList);
+    //     console.log("picking new city", country, city);
+    //     setCurrentPlace({ country, city });
+    //     Geocode.fromAddress(city).then(
+    //         (response) => {
+    //             const { lat, lng } = response.results[0].geometry.location;
 
-                let randomPoint = utils.generateRandomPoint({ lat, lng }, 10000);
-                dispatch(gameSlice.updateCity(randomPoint));
-            },
-            (error) => {
-                console.error(error);
-            }
-        );
+    //             let randomPoint = utils.generateRandomPoint({ lat, lng }, 100);
+    //             dispatch(gameSlice.updateCity(randomPoint));
+    //         },
+    //         (error) => {
+    //             console.error("geocode error", error);
+    //         }
+    //     );
+    // };
+
+    const pickNewCity = async () => {
+        let randomPoint = null;
+        console.log("-------------------------");
+
+        try {
+            // await retry(
+            //     async (bail) => {
+            // if anything throws, we retry\
+            let { country, city } = utils.pickRandomCity(cityList);
+            setCurrentPlace({ country, city });
+            console.log("current place", city, country);
+            const res = await Geocode.fromAddress(`${city}, ${country}`);
+            console.log("res", res);
+            const { lat, lng } = await res.results[0].geometry.location;
+            // console.log("lat lng", lat, lng);
+
+            randomPoint = utils.generateRandomPoint({ lat, lng }, 100);
+            console.log("randomPoint", randomPoint);
+            //check that randomPoint streetview is valid
+
+            // let streetViewResponse = await fetch(
+            //     `https://maps.googleapis.com/maps/api/streetview/metadata?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&location=${randomPoint.lat},${randomPoint.lng}&return_error_codes=true&radius=100&source=outdoor`
+            // );
+
+            //     console.log("content", streetViewResponse.headers.get("content-length"));
+            //     console.log("street view", streetViewResponse);
+
+            //     let testResponse = await fetch(
+            //         "https://maps.googleapis.com/maps/api/streetview/metadata?size=600x300&location=78.648401,14.194336&fov=90&heading=235&pitch=10&key=AIzaSyDF77ug307u0njuNLmqXfWs5EJfW2r4HcA"
+            //     );
+
+            //     console.log("test", testResponse);
+            //     },
+            //     {
+            //         retries: 20,
+            //     }
+            // );
+        } catch (error) {
+            console.log("pick new city error:", error);
+        }
+
+        dispatch(gameSlice.updateCity(randomPoint));
+
+        console.log("picked new city");
     };
 
     const handleSubmitButton = () => {
@@ -102,7 +150,7 @@ const GamePage = () => {
     };
 
     const Score = () => {
-        console.log("score", score);
+        // console.log("score", score);
         return <h1>{`Score: ${score}`}</h1>;
     };
 
@@ -116,7 +164,6 @@ const GamePage = () => {
             <div className="info-section">
                 <div className="info-section__top">
                     <h1>Where are you?</h1>
-                    <Timer />
                     <Stage />
                     <MiniMap polyLineCoords={polyLineCoords} />
                 </div>
