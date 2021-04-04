@@ -28,16 +28,36 @@ const GamePage = () => {
     const [polyLineCoords, setPolyLineCoords] = useState();
     const [actualDistance, setActualDistance] = useState();
     const [showSubmitButton, setShowSubmitButton] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
+    const [nextCity, setNextCity] = useState();
+    const [isLoading, setIsLoading] = useState();
 
     useEffect(() => {
         pickNewCity();
     }, []);
 
     const pickNewCity = async () => {
+        setIsLoading(true);
+        //if cache exists, dispatch from cache
+        if (nextCity) {
+            dispatch(gameSlice.updateCity(nextCity));
+            console.log("next city cache exists, using", nextCity);
+        } else {
+            const currentCity = await getNewCity();
+            await dispatch(gameSlice.updateCity(currentCity));
+        }
+        //else
+        //dispatch from load
+
+        //load new item in cache
+        const newCity = await getNewCity();
+        await setNextCity(newCity);
+        setIsLoading(false);
+        console.log("next city is set", newCity);
+    };
+
+    const getNewCity = async () => {
         let randomPoint = null;
         console.log("-------------------------");
-        setIsLoading(true);
         try {
             await retry(
                 async (bail) => {
@@ -72,8 +92,8 @@ const GamePage = () => {
             console.log("pick new city error:", error);
         }
 
-        dispatch(gameSlice.updateCity(randomPoint));
-        setIsLoading(false);
+        return randomPoint;
+        // dispatch(gameSlice.updateCity(randomPoint));
     };
 
     const handleSubmitButton = () => {
