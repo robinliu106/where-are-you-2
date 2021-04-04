@@ -49,5 +49,10 @@ export const shuffleArray = (array) => {
 };
 
 export const pickRandomCity = (array) => {
-    return array[Math.floor(Math.random() * array.length)].city;
+    return array[Math.floor(Math.random() * array.length)];
+};
+
+export const isNaN = (value) => {
+    const n = Number(value);
+    return n !== n;
 };
