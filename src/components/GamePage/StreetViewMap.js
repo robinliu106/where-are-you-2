@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StreetViewPanorama, GoogleMap, LoadScript } from "@react-google-maps/api";
 import { useSelector, useDispatch } from "react-redux";
 import * as gameSlice from "./gameSlice";
@@ -29,6 +29,7 @@ const StreetViewMap = () => {
                             disableDefaultUI: true,
                             enableCloseButton: false,
                         }}
+                        onVisibleChanged={() => console.log("visible changed")}
                     />
                 </GoogleMap>
             </LoadScript>
