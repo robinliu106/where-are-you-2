@@ -6,12 +6,13 @@ import GamePage from "./components/GamePage";
 const App = () => {
     return (
         <div>
-            <Switch>
-                <Route path="/" component={GamePage} exact />
-            </Switch>
+            <GamePage />
         </div>
     );
 };
 
 export default App;
 // <Route path="/" component={LandingPage} exact />
+// <Switch>
+//                 <Route path="/" component={GamePage} exact />
+//             </Switch>

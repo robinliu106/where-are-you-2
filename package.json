@@ -2,7 +2,7 @@
     "name": "where-are-you-2",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://robinliu106.github.io/where-are-you-2",
+    "homepage": "https://robinliu106.github.io/where-are-you-2/",
     "dependencies": {
         "@emotion/core": "^11.0.0",
         "@emotion/react": "^11.1.5",
