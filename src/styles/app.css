@@ -3,9 +3,18 @@
     flex-direction: row;
     justify-content: space-around;
 }
-
+.info-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
 .info-section__bottom {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 20px;
+}
+
+#answer {
+    text-align: center;
 }

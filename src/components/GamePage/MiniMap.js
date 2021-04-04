@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { GoogleMap, LoadScript, Marker, Polyline } from "@react-google-maps/api";
+import { GoogleMap, InfoWindow, LoadScript, Marker, Polyline } from "@react-google-maps/api";
 import { useSelector, useDispatch } from "react-redux";
 
 import * as gameSlice from "./gameSlice";
@@ -10,7 +10,7 @@ const smallContainerStyle = {
     width: "30vw",
 };
 
-const MiniMap = ({ polyLineCoords }) => {
+const MiniMap = ({ polyLineCoords, currentPlace, actualDistance }) => {
     //LOCAL STATE
     const [mapRef, setMapRef] = useState(null);
     const [mapCenter, setMapCenter] = useState({
@@ -50,6 +50,12 @@ const MiniMap = ({ polyLineCoords }) => {
                     ) : null}
 
                     {polyLineCoords ? <Polyline path={polyLineCoords} /> : null}
+
+                    {polyLineCoords ? (
+                        <InfoWindow position={cityCoords}>
+                            <div>{`Distance to: ${currentPlace.city}, ${currentPlace.country} is ${actualDistance} miles`}</div>
+                        </InfoWindow>
+                    ) : null}
                 </GoogleMap>
             </LoadScript>
         </div>

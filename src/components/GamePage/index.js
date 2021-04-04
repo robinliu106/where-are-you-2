@@ -12,11 +12,12 @@ import * as gameSlice from "./gameSlice";
 import cityList from "../../utils/cityList";
 import StreetViewMap from "./StreetViewMap";
 import MiniMap from "./MiniMap";
-import Stage from "./Stage";
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 
 const GamePage = () => {
     const score = useSelector(gameSlice.selectScore);
+    const stage = useSelector(gameSlice.selectStage);
+
     const cityCoords = useSelector(gameSlice.selectCity);
     const markerCoords = useSelector(gameSlice.selectMarker);
     // const activeRound = useSelector(gameSlice.selectActiveRound);
@@ -31,28 +32,6 @@ const GamePage = () => {
     useEffect(() => {
         pickNewCity();
     }, []);
-
-    // useEffect(() => {
-    //     console.log("activeRound", activeRound);
-    //     setShowSubmitButton(activeRound);
-    // }, [activeRound]);
-
-    // const pickNewCity = () => {
-    //     const { country, city } = utils.pickRandomCity(cityList);
-    //     console.log("picking new city", country, city);
-    //     setCurrentPlace({ country, city });
-    //     Geocode.fromAddress(city).then(
-    //         (response) => {
-    //             const { lat, lng } = response.results[0].geometry.location;
-
-    //             let randomPoint = utils.generateRandomPoint({ lat, lng }, 100);
-    //             dispatch(gameSlice.updateCity(randomPoint));
-    //         },
-    //         (error) => {
-    //             console.error("geocode error", error);
-    //         }
-    //     );
-    // };
 
     const pickNewCity = async () => {
         let randomPoint = null;
@@ -149,13 +128,13 @@ const GamePage = () => {
         dispatch(gameSlice.updateScore(finalScore));
     };
 
-    const Score = () => {
-        // console.log("score", score);
-        return <h1>{`Score: ${score}`}</h1>;
+    const Stage = () => {
+        return <p class="lead">{`Stage ${stage}`}</p>;
     };
 
-    //Change color based on score
-    let scoreColor = "green";
+    const Score = () => {
+        return <p class="lead">{`Score: ${score}`}</p>;
+    };
 
     return (
         <div className="container">
@@ -163,24 +142,32 @@ const GamePage = () => {
 
             <div className="info-section">
                 <div className="info-section__top">
-                    <h1>Where are you?</h1>
-                    <Stage />
-                    <MiniMap polyLineCoords={polyLineCoords} />
+                    <h1 className="display-2">Where are you?</h1>
+
+                    <div className="info-box">
+                        <Stage />
+
+                        <Score />
+                    </div>
+
+                    <MiniMap
+                        polyLineCoords={polyLineCoords}
+                        currentPlace={currentPlace}
+                        actualDistance={actualDistance}
+                    />
                 </div>
 
                 <div className="info-section__bottom">
-                    {showSubmitButton && (
-                        <button className="btn btn-primary" onClick={handleSubmitButton}>
-                            Submit
-                        </button>
-                    )}
+                    <button
+                        className="btn btn-outline-primary"
+                        onClick={handleSubmitButton}
+                        disabled={!showSubmitButton}
+                    >
+                        Submit
+                    </button>
 
-                    {actualDistance
-                        ? `You were ${actualDistance} miles away from ${currentPlace.city}, ${currentPlace.country}`
-                        : null}
-                    <Score />
-                    <button className="btn btn-primary" onClick={handleNextButton}>
-                        Next
+                    <button className="btn btn-outline-success" id="next_button" onClick={handleNextButton}>
+                        Next City
                     </button>
                 </div>
             </div>
@@ -189,3 +176,8 @@ const GamePage = () => {
 };
 
 export default GamePage;
+// {actualDistance ? (
+//     <p class="lead" id="answer">
+//         {`Distance to: ${currentPlace.city}, ${currentPlace.country} is ${actualDistance} miles`}
+//     </p>
+// ) : null}
