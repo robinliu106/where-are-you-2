@@ -25,12 +25,13 @@ const GamePage = () => {
 
     const dispatch = useDispatch();
 
-    const [currentPlace, setCurrentPlace] = useState();
+    // const [currentPlace, setCurrentPlace] = useState();
     const [polyLineCoords, setPolyLineCoords] = useState();
     const [actualDistance, setActualDistance] = useState();
     const [showSubmitButton, setShowSubmitButton] = useState(true);
     const [nextCityCache, setNextCityCache] = useState();
     const [isLoading, setIsLoading] = useState();
+    const [cityName, setCityName] = useState();
 
     useEffect(() => {
         pickNewCity();
@@ -41,11 +42,13 @@ const GamePage = () => {
         //if city exists in cache, dispatch from cache
         if (nextCityCache) {
             dispatch(gameSlice.updateCity(nextCityCache));
+            await getCityName(nextCityCache); //get city name from current city lat long
             console.log("next city cache exists, using", nextCityCache);
         } else {
             //else get new city
             const currentCity = await getNewCity();
             await dispatch(gameSlice.updateCity(currentCity));
+            await getCityName(currentCity); //get city name from current city lat long
         }
 
         //load next city in cache
@@ -57,14 +60,15 @@ const GamePage = () => {
 
     const getNewCity = async () => {
         let randomPoint = null;
+        // const city = null;
+        // const country = null;
         console.log("-------------------------");
         try {
             await retry(
                 async (bail) => {
                     // if anything throws, we retry\
-                    let { country, city } = utils.pickRandomCity(cityList);
-                    setCurrentPlace({ country, city });
-                    console.log("current place", city, country);
+                    const { country, city } = utils.pickRandomCity(cityList);
+
                     const res = await Geocode.fromAddress(`${city}, ${country}`);
                     console.log("res", res);
                     const { lat, lng } = await res.results[0].geometry.location;
@@ -91,9 +95,20 @@ const GamePage = () => {
         } catch (error) {
             console.log("pick new city error:", error);
         }
-
+        // setCurrentPlace({ country, city });
+        // console.log("current place", city, country);
         return randomPoint;
-        // dispatch(gameSlice.updateCity(randomPoint));
+    };
+
+    const getCityName = async ({ lat, lng }) => {
+        try {
+            const res = await Geocode.fromLatLng(lat, lng);
+            const address = await res.results[0].formatted_address;
+            setCityName(address);
+            console.log("address is", address);
+        } catch (error) {
+            console.log("getCityName Error:", error);
+        }
     };
 
     const handleSubmitButton = () => {
@@ -146,11 +161,11 @@ const GamePage = () => {
     };
 
     const Stage = () => {
-        return <p class="lead">{`Stage ${stage}`}</p>;
+        return <p className="lead">{`Stage ${stage}`}</p>;
     };
 
     const Score = () => {
-        return <p class="lead">{`Score: ${score}`}</p>;
+        return <p className="lead">{`Score: ${score}`}</p>;
     };
 
     return (
@@ -159,7 +174,7 @@ const GamePage = () => {
 
             <div className="info-section">
                 <div className="info-section__top">
-                    <h1 className="display-2">Where are you?</h1>
+                    <h1 className="display-4">Where are you?</h1>
 
                     <div className="info-box">
                         <Stage />
@@ -167,11 +182,7 @@ const GamePage = () => {
                         <Score />
                     </div>
 
-                    <MiniMap
-                        polyLineCoords={polyLineCoords}
-                        currentPlace={currentPlace}
-                        actualDistance={actualDistance}
-                    />
+                    <MiniMap polyLineCoords={polyLineCoords} cityName={cityName} actualDistance={actualDistance} />
                 </div>
 
                 <div className="info-section__bottom">

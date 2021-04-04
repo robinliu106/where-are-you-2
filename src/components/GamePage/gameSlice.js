@@ -8,6 +8,7 @@ export const gameSlice = createSlice({
         activeRound: true,
         cityCoords: {},
         markerCoords: {},
+        cityName: "",
     },
     reducers: {
         updateScore: (state, action) => {
@@ -16,6 +17,9 @@ export const gameSlice = createSlice({
         updateCity: (state, action) => {
             state.cityCoords = action.payload;
         },
+        // updateCityName: (state, action) => {
+        //     state.cityCoords = action.payload;
+        // },
         updateMarker: (state, action) => {
             state.markerCoords = action.payload;
         },
@@ -37,7 +41,7 @@ export const { updateScore, updateCity, updateMarker, updateStage, setActiveRoun
 // export const incrementAsync = (amount) => (dispatch) => {
 //     setTimeout(() => {
 //         dispatch(incrementByAmount(amount));
-//     }, 1000);
+//     } 1000);
 // };
 
 // The function below is called a selector and allows us to select a score from
@@ -46,6 +50,8 @@ export const { updateScore, updateCity, updateMarker, updateStage, setActiveRoun
 export const selectScore = (state) => state.game.score;
 export const selectStage = (state) => state.game.stage;
 export const selectCity = (state) => state.game.cityCoords;
+// export const selectCityName = (state) => state.game.cityName;
+
 export const selectMarker = (state) => state.game.markerCoords;
 export const selectActiveRound = (state) => state.game.activeRound;
 

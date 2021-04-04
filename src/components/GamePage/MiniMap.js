@@ -10,7 +10,7 @@ const smallContainerStyle = {
     width: "30vw",
 };
 
-const MiniMap = ({ polyLineCoords, currentPlace, actualDistance }) => {
+const MiniMap = ({ polyLineCoords, cityName, actualDistance }) => {
     //LOCAL STATE
     const [mapRef, setMapRef] = useState(null);
     const [mapCenter, setMapCenter] = useState({
@@ -53,7 +53,7 @@ const MiniMap = ({ polyLineCoords, currentPlace, actualDistance }) => {
 
                     {polyLineCoords ? (
                         <InfoWindow position={cityCoords}>
-                            <div>{`Distance to: ${currentPlace.city}, ${currentPlace.country} is ${actualDistance} miles`}</div>
+                            <div>{`Distance to: ${cityName} is ${actualDistance} miles`}</div>
                         </InfoWindow>
                     ) : null}
                 </GoogleMap>
