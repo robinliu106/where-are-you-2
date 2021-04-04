@@ -12,6 +12,7 @@ import * as gameSlice from "./gameSlice";
 import cityList from "../../utils/cityList";
 import StreetViewMap from "./StreetViewMap";
 import MiniMap from "./MiniMap";
+import Spinner from "./Spinner";
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 //TODO add cors anywhere
 const GamePage = () => {
@@ -28,7 +29,7 @@ const GamePage = () => {
     const [polyLineCoords, setPolyLineCoords] = useState();
     const [actualDistance, setActualDistance] = useState();
     const [showSubmitButton, setShowSubmitButton] = useState(true);
-    const [nextCity, setNextCity] = useState();
+    const [nextCityCache, setNextCityCache] = useState();
     const [isLoading, setIsLoading] = useState();
 
     useEffect(() => {
@@ -37,20 +38,19 @@ const GamePage = () => {
 
     const pickNewCity = async () => {
         setIsLoading(true);
-        //if cache exists, dispatch from cache
-        if (nextCity) {
-            dispatch(gameSlice.updateCity(nextCity));
-            console.log("next city cache exists, using", nextCity);
+        //if city exists in cache, dispatch from cache
+        if (nextCityCache) {
+            dispatch(gameSlice.updateCity(nextCityCache));
+            console.log("next city cache exists, using", nextCityCache);
         } else {
+            //else get new city
             const currentCity = await getNewCity();
             await dispatch(gameSlice.updateCity(currentCity));
         }
-        //else
-        //dispatch from load
 
-        //load new item in cache
+        //load next city in cache
         const newCity = await getNewCity();
-        await setNextCity(newCity);
+        await setNextCityCache(newCity);
         setIsLoading(false);
         console.log("next city is set", newCity);
     };
@@ -185,6 +185,7 @@ const GamePage = () => {
 
                     <button className="btn btn-outline-success" id="next_button" onClick={handleNextButton}>
                         {isLoading ? "Loading" : "Next City"}
+                        {isLoading ? <Spinner loading={true} /> : null}
                     </button>
                 </div>
             </div>
