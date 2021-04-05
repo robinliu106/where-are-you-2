@@ -1,5 +1,5 @@
-import cityList from "./cityList";
-import { cityListTwo } from "./cityListTwo";
+import { cityListCapitals } from "./cityListCapitals";
+import { cityListAll } from "./cityListAll";
 
 export const generateRandomPoint = (center, radius) => {
     var x0 = center.lng;
@@ -23,6 +23,7 @@ export const generateRandomPoint = (center, radius) => {
         lng: parseFloat((xp + x0).toFixed(6)),
     };
 };
+
 export const calculateDistance = (lat1, lng1, lat2, lng2) => {
     function deg2rad(deg) {
         return deg * (Math.PI / 180);
@@ -52,20 +53,15 @@ export const shuffleArray = (array) => {
 };
 
 export const pickRandomCity = () => {
-    return cityList[Math.floor(Math.random() * cityList.length)];
+    return cityListCapitals[Math.floor(Math.random() * cityListCapitals.length)];
 };
 
 export const pickRandomCityTwo = () => {
-    var keys = Object.keys(cityListTwo);
+    var keys = Object.keys(cityListAll);
     let randomCountry = keys[(keys.length * Math.random()) << 0];
-    let randomCityList = cityListTwo[randomCountry];
+    let randomCityList = cityListAll[randomCountry];
 
     let randomCity = randomCityList[Math.floor(Math.random() * randomCityList.length)];
-    // console.log(randomCityList.length);
-    // cityListTwo[];
-    // console.log("country", randomCountry);
-    // console.log("city", randomCityList);
-    console.log("random city two", randomCity, randomCountry);
 
     return { country: randomCountry, city: randomCity };
 };

@@ -1,4 +1,4 @@
-let cityList = [
+export const cityListCapitals = [
     {
         country: "Afghanistan",
         city: "Kabul",
@@ -951,5 +951,3 @@ let cityList = [
         city: "Harare",
     },
 ];
-
-export default cityList;
