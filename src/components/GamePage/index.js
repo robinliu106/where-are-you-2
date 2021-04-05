@@ -16,7 +16,6 @@ Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 const GamePage = () => {
     const score = useSelector(gameSlice.selectScore);
     const stage = useSelector(gameSlice.selectStage);
-
     const cityCoords = useSelector(gameSlice.selectCity);
     const markerCoords = useSelector(gameSlice.selectMarker);
 
@@ -39,15 +38,14 @@ const GamePage = () => {
         //if city exists in cache, dispatch from cache
         if (nextCityCache) {
             dispatch(gameSlice.updateCity(nextCityCache));
-            await getCityName(nextCityCache); //get city name from current city lat long
-            // console.log("next city cache exists, using", nextCityCache);
-            setRadius(1000);
+            await getCityName(nextCityCache); //get city name from current coords
+            setRadius(1000); //increase radius after first round
         } else {
             //else get new city
             const currentCity = await getNewCity();
-            await dispatch(gameSlice.updateCity(currentCity));
+            await dispatch(gameSlice.updateCity(currentCity)); //dispatch city
             setShowSubmitButton(true);
-            getCityName(currentCity); //get city name from current city lat long
+            getCityName(currentCity); //get city name from current coords
         }
 
         //load next city in cache
@@ -61,18 +59,15 @@ const GamePage = () => {
         let randomPoint = null;
 
         try {
+            //async retry will run again if it throws an error
             await retry(
                 async (bail) => {
-                    // if anything throws, we retry\
                     const { country, city } = utils.pickRandomCity();
 
                     const res = await Geocode.fromAddress(`${city}, ${country}`);
-                    // console.log("res", res);
                     const { lat, lng } = await res.results[0].geometry.location;
-                    // console.log("lat lng", lat, lng);
 
                     randomPoint = utils.generateRandomPoint({ lat, lng }, radius);
-                    // console.log("randomPoint", randomPoint);
 
                     //check that street view exists
                     let streetViewFetch = await fetch(
