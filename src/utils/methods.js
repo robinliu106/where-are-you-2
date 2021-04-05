@@ -1,3 +1,5 @@
+import cityList from "./cityList";
+
 export const generateRandomPoint = (center, radius) => {
     var x0 = center.lng;
     var y0 = center.lat;
@@ -48,11 +50,31 @@ export const shuffleArray = (array) => {
     return array;
 };
 
-export const pickRandomCity = (array) => {
-    return array[Math.floor(Math.random() * array.length)];
+export const pickRandomCity = () => {
+    return cityList[Math.floor(Math.random() * cityList.length)];
 };
 
 export const isNaN = (value) => {
     const n = Number(value);
     return n !== n;
+};
+
+export const calculateScore = (distance) => {
+    let finalScore = 0;
+
+    if (distance < 10) {
+        finalScore += 1000;
+    } else if (distance < 50) {
+        finalScore += 500;
+    } else if (distance < 200) {
+        finalScore += 400;
+    } else if (distance < 1000) {
+        finalScore += 300;
+    } else if (distance < 5000) {
+        finalScore += 200;
+    } else if (distance < 10000) {
+        finalScore += 100;
+    }
+
+    return finalScore;
 };

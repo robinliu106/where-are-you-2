@@ -18,8 +18,8 @@ const StreetViewMap = () => {
                     mapContainerStyle={bigContainerStyle}
                     zoom={7}
                     initialCenter={{
-                        lat: 42.3517071,
-                        lng: -71.0691937,
+                        lat: parseFloat(42.3517071),
+                        lng: parseFloat(-71.0691937),
                     }}
                 >
                     <StreetViewPanorama
@@ -29,7 +29,6 @@ const StreetViewMap = () => {
                             disableDefaultUI: true,
                             enableCloseButton: false,
                         }}
-                        onVisibleChanged={() => console.log("visible changed")}
                     />
                 </GoogleMap>
             </LoadScript>

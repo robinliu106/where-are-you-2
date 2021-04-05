@@ -1,18 +1,16 @@
-import "../../styles/app.css";
+import "./app.css";
 import React, { useState, useEffect } from "react";
 import Geocode from "react-geocode";
 import { useSelector, useDispatch } from "react-redux";
 import retry from "async-retry";
-import * as nodeutil from "util";
-import Timer from "./Timer";
 
 //Local methods and data
 import * as utils from "../../utils/methods";
 import * as gameSlice from "./gameSlice";
-import cityList from "../../utils/cityList";
 import StreetViewMap from "./StreetViewMap";
 import MiniMap from "./MiniMap";
 import Spinner from "./Spinner";
+
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 //TODO add cors anywhere
 const GamePage = () => {
@@ -21,17 +19,16 @@ const GamePage = () => {
 
     const cityCoords = useSelector(gameSlice.selectCity);
     const markerCoords = useSelector(gameSlice.selectMarker);
-    // const activeRound = useSelector(gameSlice.selectActiveRound);
 
     const dispatch = useDispatch();
 
-    // const [currentPlace, setCurrentPlace] = useState();
     const [polyLineCoords, setPolyLineCoords] = useState();
     const [actualDistance, setActualDistance] = useState();
-    const [showSubmitButton, setShowSubmitButton] = useState(true);
+    const [showSubmitButton, setShowSubmitButton] = useState(false);
     const [nextCityCache, setNextCityCache] = useState();
     const [isLoading, setIsLoading] = useState();
     const [cityName, setCityName] = useState();
+    const [radius, setRadius] = useState(100);
 
     useEffect(() => {
         pickNewCity();
@@ -43,39 +40,39 @@ const GamePage = () => {
         if (nextCityCache) {
             dispatch(gameSlice.updateCity(nextCityCache));
             await getCityName(nextCityCache); //get city name from current city lat long
-            console.log("next city cache exists, using", nextCityCache);
+            // console.log("next city cache exists, using", nextCityCache);
+            setRadius(1000);
         } else {
             //else get new city
             const currentCity = await getNewCity();
             await dispatch(gameSlice.updateCity(currentCity));
-            await getCityName(currentCity); //get city name from current city lat long
+            setShowSubmitButton(true);
+            getCityName(currentCity); //get city name from current city lat long
         }
 
         //load next city in cache
         const newCity = await getNewCity();
         await setNextCityCache(newCity);
         setIsLoading(false);
-        console.log("next city is set", newCity);
+        // console.log("next city is set", newCity);
     };
 
     const getNewCity = async () => {
         let randomPoint = null;
-        // const city = null;
-        // const country = null;
-        console.log("-------------------------");
+
         try {
             await retry(
                 async (bail) => {
                     // if anything throws, we retry\
-                    const { country, city } = utils.pickRandomCity(cityList);
+                    const { country, city } = utils.pickRandomCity();
 
                     const res = await Geocode.fromAddress(`${city}, ${country}`);
-                    console.log("res", res);
+                    // console.log("res", res);
                     const { lat, lng } = await res.results[0].geometry.location;
                     // console.log("lat lng", lat, lng);
 
-                    randomPoint = utils.generateRandomPoint({ lat, lng }, 100);
-                    console.log("randomPoint", randomPoint);
+                    randomPoint = utils.generateRandomPoint({ lat, lng }, radius);
+                    // console.log("randomPoint", randomPoint);
 
                     //check that street view exists
                     let streetViewFetch = await fetch(
@@ -86,7 +83,7 @@ const GamePage = () => {
                     if (streetViewResponse.status !== "OK") {
                         throw "error";
                     }
-                    console.log("streetViewResponse", streetViewResponse);
+                    // console.log("streetViewResponse", streetViewResponse);
                 },
                 {
                     retries: 20,
@@ -95,7 +92,6 @@ const GamePage = () => {
         } catch (error) {
             console.log("pick new city error:", error);
         }
-        // setCurrentPlace({ country, city });
         // console.log("current place", city, country);
         return randomPoint;
     };
@@ -122,10 +118,11 @@ const GamePage = () => {
         const distance = utils.calculateDistance(...Object.values(cityCoords), ...Object.values(markerCoords));
 
         if (distance && !utils.isNaN(distance)) {
-            console.log("actual distance", distance);
+            // console.log("actual distance", distance);
 
             setActualDistance(distance);
-            calculateScore(distance);
+            const score = utils.calculateScore(distance);
+            dispatch(gameSlice.updateScore(score));
         }
         setShowSubmitButton(false);
     };
@@ -138,26 +135,6 @@ const GamePage = () => {
 
         pickNewCity();
         dispatch(gameSlice.updateStage());
-    };
-
-    const calculateScore = (distance) => {
-        let finalScore = 0;
-
-        if (distance < 10) {
-            finalScore += 1000;
-        } else if (distance < 50) {
-            finalScore += 500;
-        } else if (distance < 200) {
-            finalScore += 400;
-        } else if (distance < 1000) {
-            finalScore += 300;
-        } else if (distance < 5000) {
-            finalScore += 200;
-        } else if (distance < 10000) {
-            finalScore += 100;
-        }
-
-        dispatch(gameSlice.updateScore(finalScore));
     };
 
     const Stage = () => {

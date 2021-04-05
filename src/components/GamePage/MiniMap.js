@@ -14,8 +14,8 @@ const MiniMap = ({ polyLineCoords, cityName, actualDistance }) => {
     //LOCAL STATE
     const [mapRef, setMapRef] = useState(null);
     const [mapCenter, setMapCenter] = useState({
-        lat: 42.3517071,
-        lng: -71.0691937,
+        lat: parseFloat(42.3517071),
+        lng: parseFloat(-71.0691937),
     });
 
     //REDUX
@@ -25,8 +25,7 @@ const MiniMap = ({ polyLineCoords, cityName, actualDistance }) => {
 
     const handleMarkerCoords = (e) => {
         const { lat, lng } = e.latLng.toJSON();
-        // setMarkerCoords({ lat, lng });
-        dispatch(gameSlice.updateMarker({ lat, lng }));
+        dispatch(gameSlice.updateMarker({ lat: parseFloat(lat), lng: parseFloat(lng) }));
     };
 
     return (
@@ -40,7 +39,7 @@ const MiniMap = ({ polyLineCoords, cityName, actualDistance }) => {
                     onDragEnd={() => {
                         if (mapRef) {
                             let { lat, lng } = mapRef.getCenter().toJSON();
-                            setMapCenter({ lat, lng });
+                            setMapCenter({ lat: parseFloat(lat), lng: parseFloat(lng) });
                         }
                     }}
                     onClick={(e) => handleMarkerCoords(e)}
