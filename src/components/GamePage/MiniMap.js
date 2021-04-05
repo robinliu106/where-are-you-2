@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import * as gameSlice from "./gameSlice";
 
 const smallContainerStyle = {
-    height: "50vh",
+    height: "75vh",
     width: "30vw",
 };
 
@@ -28,13 +28,14 @@ const MiniMap = ({ polyLineCoords, cityName, actualDistance }) => {
         dispatch(gameSlice.updateMarker({ lat: parseFloat(lat), lng: parseFloat(lng) }));
     };
 
+    //If polyLineCoords exists, the round is over and actualDistance also exists
     return (
         <div>
             <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
                 <GoogleMap
                     onLoad={(map) => setMapRef(map)}
                     mapContainerStyle={smallContainerStyle}
-                    zoom={1}
+                    zoom={3}
                     center={mapCenter}
                     onDragEnd={() => {
                         if (mapRef) {

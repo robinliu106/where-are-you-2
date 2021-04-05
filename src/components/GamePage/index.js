@@ -25,21 +25,19 @@ const GamePage = () => {
     const [actualDistance, setActualDistance] = useState();
     const [showSubmitButton, setShowSubmitButton] = useState(false);
     const [nextCityCache, setNextCityCache] = useState();
-    const [isLoading, setIsLoading] = useState();
+    const [isLoadingNext, setIsLoadingNext] = useState();
     const [cityName, setCityName] = useState();
-    const [radius, setRadius] = useState(100);
 
     useEffect(() => {
         pickNewCity();
     }, []);
 
     const pickNewCity = async () => {
-        setIsLoading(true);
+        setIsLoadingNext(true);
         //if city exists in cache, dispatch from cache
         if (nextCityCache) {
             dispatch(gameSlice.updateCity(nextCityCache));
             await getCityName(nextCityCache); //get city name from current coords
-            setRadius(1000); //increase radius after first round
         } else {
             //else get new city
             const currentCity = await getNewCity();
@@ -51,7 +49,7 @@ const GamePage = () => {
         //load next city in cache
         const newCity = await getNewCity();
         await setNextCityCache(newCity);
-        setIsLoading(false);
+        setIsLoadingNext(false);
         // console.log("next city is set", newCity);
     };
 
@@ -62,12 +60,13 @@ const GamePage = () => {
             //async retry will run again if it throws an error
             await retry(
                 async (bail) => {
-                    const { country, city } = utils.pickRandomCity();
+                    // const { country, city } = utils.pickRandomCity(); //capital cities
+                    const { country, city } = utils.pickRandomCityTwo(); //all cities
 
                     const res = await Geocode.fromAddress(`${city}, ${country}`);
                     const { lat, lng } = await res.results[0].geometry.location;
 
-                    randomPoint = utils.generateRandomPoint({ lat, lng }, radius);
+                    randomPoint = utils.generateRandomPoint({ lat, lng }, 100);
 
                     //check that street view exists
                     let streetViewFetch = await fetch(
@@ -85,7 +84,7 @@ const GamePage = () => {
                 }
             );
         } catch (error) {
-            console.log("pick new city error:", error);
+            console.log("ERROR PICKING CITY:", error);
         }
         // console.log("current place", city, country);
         return randomPoint;
@@ -124,12 +123,14 @@ const GamePage = () => {
 
     const handleNextButton = () => {
         dispatch(gameSlice.updateMarker(null));
+        dispatch(gameSlice.updateStage());
+
+        //reset stuff
         setPolyLineCoords(null);
         setActualDistance(null);
         setShowSubmitButton(true);
 
         pickNewCity();
-        dispatch(gameSlice.updateStage());
     };
 
     const Stage = () => {
@@ -159,7 +160,7 @@ const GamePage = () => {
 
                 <div className="info-section__bottom">
                     <button
-                        className="btn btn-outline-primary"
+                        className="btn btn-outline-primary btn-lg"
                         onClick={handleSubmitButton}
                         disabled={!showSubmitButton}
                     >
@@ -167,13 +168,13 @@ const GamePage = () => {
                     </button>
 
                     <button
-                        className="btn btn-outline-success"
+                        className="btn btn-outline-success btn-lg"
                         id="next_button"
                         onClick={handleNextButton}
-                        disabled={isLoading}
+                        disabled={isLoadingNext}
                     >
-                        {isLoading ? "Loading" : "Next City"}
-                        {isLoading ? <Spinner loading={true} /> : null}
+                        {isLoadingNext ? "Finding Next City" : "Next City"}
+                        {isLoadingNext ? <Spinner loading={true} /> : null}
                     </button>
                 </div>
             </div>

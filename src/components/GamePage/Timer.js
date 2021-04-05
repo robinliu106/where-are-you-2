@@ -2,16 +2,11 @@ import React from "react";
 import { useTimer } from "react-timer-hook";
 import { useSelector, useDispatch } from "react-redux";
 
-import * as gameSlice from "./gameSlice";
-
 const MyTimer = ({ expiryTimestamp }) => {
-    const dispatch = useDispatch();
-
     const { seconds, minutes, hours, days, isRunning, start, pause, resume, restart } = useTimer({
         expiryTimestamp,
         onExpire: () => {
             console.warn("onExpire called");
-            dispatch(gameSlice.setActiveRound(false));
         },
     });
 

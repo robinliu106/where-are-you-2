@@ -4,9 +4,8 @@ export const gameSlice = createSlice({
     name: "game",
     initialState: {
         score: 0,
-        stage: 1,
-        activeRound: true,
         cityCoords: {},
+        stage: 1,
         markerCoords: {},
         cityName: "",
     },
@@ -17,22 +16,16 @@ export const gameSlice = createSlice({
         updateCity: (state, action) => {
             state.cityCoords = action.payload;
         },
-        // updateCityName: (state, action) => {
-        //     state.cityCoords = action.payload;
-        // },
         updateMarker: (state, action) => {
             state.markerCoords = action.payload;
         },
         updateStage: (state) => {
             state.stage += 1;
         },
-        setActiveRound: (state, action) => {
-            state.activeRound = action.payload;
-        },
     },
 });
 
-export const { updateScore, updateCity, updateMarker, updateStage, setActiveRound } = gameSlice.actions;
+export const { updateScore, updateCity, updateMarker, updateStage } = gameSlice.actions;
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
@@ -50,9 +43,6 @@ export const { updateScore, updateCity, updateMarker, updateStage, setActiveRoun
 export const selectScore = (state) => state.game.score;
 export const selectStage = (state) => state.game.stage;
 export const selectCity = (state) => state.game.cityCoords;
-// export const selectCityName = (state) => state.game.cityName;
-
 export const selectMarker = (state) => state.game.markerCoords;
-export const selectActiveRound = (state) => state.game.activeRound;
 
 export default gameSlice.reducer;

@@ -1,4 +1,5 @@
 import cityList from "./cityList";
+import { cityListTwo } from "./cityListTwo";
 
 export const generateRandomPoint = (center, radius) => {
     var x0 = center.lng;
@@ -52,6 +53,21 @@ export const shuffleArray = (array) => {
 
 export const pickRandomCity = () => {
     return cityList[Math.floor(Math.random() * cityList.length)];
+};
+
+export const pickRandomCityTwo = () => {
+    var keys = Object.keys(cityListTwo);
+    let randomCountry = keys[(keys.length * Math.random()) << 0];
+    let randomCityList = cityListTwo[randomCountry];
+
+    let randomCity = randomCityList[Math.floor(Math.random() * randomCityList.length)];
+    // console.log(randomCityList.length);
+    // cityListTwo[];
+    // console.log("country", randomCountry);
+    // console.log("city", randomCityList);
+    console.log("random city two", randomCity, randomCountry);
+
+    return { country: randomCountry, city: randomCity };
 };
 
 export const isNaN = (value) => {

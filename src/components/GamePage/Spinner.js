@@ -10,7 +10,7 @@ const override = css`
 `;
 
 const Spinner = ({ loading }) => {
-    let color = "#ffffff";
+    let color = "#008000";
 
     return (
         <div className="sweet-loading">
