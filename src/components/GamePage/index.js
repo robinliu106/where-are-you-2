@@ -4,12 +4,15 @@ import Geocode from "react-geocode";
 import { useSelector, useDispatch } from "react-redux";
 import retry from "async-retry";
 
+import { useHistory, useLocation } from "react-router-dom";
+
 //Local methods and data
 import * as utils from "../../utils/methods";
 import * as gameSlice from "./gameSlice";
 import StreetViewMap from "./StreetViewMap";
 import MiniMap from "./MiniMap";
 import Spinner from "./Spinner";
+import NavBar from "../NavBar";
 
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 //TODO add cors anywhere
@@ -27,6 +30,11 @@ const GamePage = () => {
     const [nextCityCache, setNextCityCache] = useState();
     const [isLoadingNext, setIsLoadingNext] = useState();
     const [cityName, setCityName] = useState();
+
+    const location = useLocation();
+    const gameId = location.pathname.replace("/game/", "");
+    console.log("location", location);
+    console.log("gameId", gameId);
 
     useEffect(() => {
         pickNewCity();
@@ -134,7 +142,7 @@ const GamePage = () => {
     };
 
     const Stage = () => {
-        return <p className="lead">{`Stage ${stage}`}</p>;
+        return <p className="lead">{`City ${stage}`}</p>;
     };
 
     const Score = () => {
@@ -142,40 +150,43 @@ const GamePage = () => {
     };
 
     return (
-        <div className="container">
-            <StreetViewMap />
+        <div>
+            <NavBar />
+            <div className="container">
+                <StreetViewMap />
 
-            <div className="info-section">
-                <div className="info-section__top">
-                    <h1 className="display-4">Where are you?</h1>
+                <div className="info-section">
+                    <div className="info-section__top">
+                        <h1 className="display-4">Where are you?</h1>
 
-                    <div className="info-box">
-                        <Stage />
+                        <div className="info-box">
+                            <Stage />
 
-                        <Score />
+                            <Score />
+                        </div>
+
+                        <MiniMap polyLineCoords={polyLineCoords} cityName={cityName} actualDistance={actualDistance} />
                     </div>
 
-                    <MiniMap polyLineCoords={polyLineCoords} cityName={cityName} actualDistance={actualDistance} />
-                </div>
+                    <div className="info-section__bottom">
+                        <button
+                            className="btn btn-outline-primary btn-lg"
+                            onClick={handleSubmitButton}
+                            disabled={!showSubmitButton}
+                        >
+                            Submit
+                        </button>
 
-                <div className="info-section__bottom">
-                    <button
-                        className="btn btn-outline-primary btn-lg"
-                        onClick={handleSubmitButton}
-                        disabled={!showSubmitButton}
-                    >
-                        Submit
-                    </button>
-
-                    <button
-                        className="btn btn-outline-success btn-lg"
-                        id="next_button"
-                        onClick={handleNextButton}
-                        disabled={isLoadingNext}
-                    >
-                        {isLoadingNext ? "Finding Next City" : "Next City"}
-                        {isLoadingNext ? <Spinner loading={true} /> : null}
-                    </button>
+                        <button
+                            className="btn btn-outline-success btn-lg"
+                            id="next_button"
+                            onClick={handleNextButton}
+                            disabled={isLoadingNext}
+                        >
+                            {isLoadingNext ? "Finding Next City" : "Next City"}
+                            {isLoadingNext ? <Spinner loading={true} /> : null}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
